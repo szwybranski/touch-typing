@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touch Typing App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #333; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+
+        #keyboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        .key {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #555; /* Darker border color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            background-color: #444; /* Darker key color */
+            text-transform: uppercase;
+        }
+
+        .wide-key {
+            grid-column: span 2;
+        }
+
+        .highlight {
+            background-color: #66cc66; /* Highlight color */
+        }
+
+        .incorrect {
+            color: violet; /* Incorrect key color */
+        }
+
+        #lessonSelector {
+            margin-top: 20px;
+        }
+
+        #textToType {
+            font-size: 54px; /* Triple the size */
+            word-wrap: break-word; /* Word wrapping */
+            margin: 0 20px; /* Margins from left and right */
+            color: #fff; /* Light text color */
+        }
+
+        #lessonStats {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="lessonSelector">
+        <label for="lesson">Select Lesson:</label>
+        <select id="lesson">
+            <option value="1">Lesson 1 (A, S, D, F, G)</option>
+            <option value="2">Lesson 2 (H, J, K, L, ;)</option>
+            <option value="3">Lesson 3 (A, S, D, F, G, H, J, K, L, ;)</option>
+            <option value="4">Lesson 4 (Q, W, E, R, T, A, S, D, F, G)</option>
+            <option value="5">Lesson 5 (Y, U, I, O, P, H, J, K, L, ;)</option>
+            <option value="6">Lesson 6 (Q, W, E, R, T, A, S, D, F, G, Y, U, I, O, P, H, J, K, L, ;)</option>
+            <option value="7">Lesson 7 (A, S, D, F, G, Z, X, C, V, B)</option>
+            <option value="8">Lesson 8 (H, J, K, L, ;, N, M, ",", ".", /)</option>
+        </select>
+        <button onclick="startLesson()">Start Lesson</button>
+    </div>
+
+    <div id="textToType"></div>
+    <div id="lessonStats"></div>
+    <div id="keyboard"></div>
+
+    <!-- Include your sound effect file here -->
+    <audio id="keySound" src="start.mp3"></audio>
+    <audio id="successSound" src="success.mp3"></audio>
+
+    <script>
+        let currentLesson = [];
+        let currentIndex = 0;
+        let lessonStartTime;
+        let correctArray = [];
+        let goodKeys = 0;
+        let badKeys = 0;
+
+        const keyboardLayout = [
+            '1234567890-=', 'QWERTYUIOP[]', 'ASDFGHJKL;\'', 'ZXCVBNM,./', ' '
+        ];
+
+        function startLesson() {
+            const lessonSelect = document.getElementById('lesson');
+            const selectedLesson = lessonSelect.value;
+
+            // Clear lesson success message
+            document.getElementById('lessonStats').innerHTML = '';
+
+            // Reset lesson variables
+            currentLesson = generateLessonText(selectedLesson, 90); // Triple the size
+            correctArray = new Array(currentLesson.length).fill(true);
+            currentIndex = 0;
+            lessonStartTime = new Date();
+            goodKeys = 0;
+            badKeys = 0;
+
+            updateTextToType();
+            updateKeyboard();
+        }
+
+        function generateLessonText(lessonNumber, length) {
+            const lessonKeys = getLessonKeys(lessonNumber);
+            let text = '';
+            let prevKey = '';
+            for (let i = 0; i < length; i++) {
+                let currentKey = lessonKeys[Math.floor(Math.random() * lessonKeys.length)];
+                // Ensure the next key is different than the previous one
+                while (currentKey === prevKey) {
+                    currentKey = lessonKeys[Math.floor(Math.random() * lessonKeys.length)];
+                }
+                text += currentKey.toLowerCase(); // Display in lowercase
+                prevKey = currentKey;
+            }
+            return text;
+        }
+
+        function getLessonKeys(lessonNumber) {
+            if (lessonNumber === '1') {
+                return ['A', 'S', 'D', 'F', 'G'];
+            } else if (lessonNumber === '2') {
+                return ['H', 'J', 'K', 'L', ';'];
+            } else if (lessonNumber === '3') {
+                return ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'];
+            } else if (lessonNumber === '4') {
+                return ['Q', 'W', 'E', 'R', 'T', 'A', 'S', 'D', 'F', 'G'];
+            } else if (lessonNumber === '5') {
+                return ['Y', 'U', 'I', 'O', 'P', 'H', 'J', 'K', 'L', ';'];
+            } else if (lessonNumber === '6') {
+                return ['Q', 'W', 'E', 'R', 'T', 'A', 'S', 'D', 'F', 'G', 'Y', 'U', 'I', 'O', 'P', 'H', 'J', 'K', 'L', ';'];
+            } else if (lessonNumber === '7') {
+                return ['A', 'S', 'D', 'F', 'G', 'Z', 'X', 'C', 'V', 'B'];
+            } else if (lessonNumber === '8') {
+                return ['H', 'J', 'K', 'L', ';', 'N', 'M', '"', ',', '.', '/'];
+            }
+        }
+
+        function updateTextToType() {
+            const textToType = document.getElementById('textToType');
+            const nextLetter = currentLesson[currentIndex];
+            textToType.innerHTML = currentLesson
+                .split('')
+                .map((letter, index) => `<span class="${index === currentIndex ? 'highlight' : ''} ${correctArray[index] ? '' : 'incorrect'}">${letter}</span>`)
+                .join('');
+        }
+
+        function updateKeyboard() {
+            const keyboard = document.getElementById('keyboard');
+            keyboard.innerHTML = '';
+
+            keyboardLayout.forEach(row => {
+                row.split('').forEach(key => {
+                    const keyElement = document.createElement('div');
+                    keyElement.classList.add('key');
+                    if (key === ' ') {
+                        keyElement.classList.add('wide-key');
+                    }
+                    keyElement.textContent = key;
+                    keyElement.addEventListener('click', () => checkKeyPress(key));
+                    keyboard.appendChild(keyElement);
+                });
+            });
+        }
+
+        function highlightCurrentKey() {
+            const keyboard = document.getElementById('keyboard');
+            const keys = keyboard.getElementsByClassName('key');
+
+            Array.from(keys).forEach((key, index) => {
+                if (key.textContent === currentLesson[currentIndex].toUpperCase()) {
+                    key.style.backgroundColor = '#66cc66'; // Highlight current key
+                } else {
+                    key.style.backgroundColor = ''; // Remove highlight from other keys
+                }
+            });
+        }
+
+        function checkKeyPress(key) {
+            if (key.toUpperCase() === currentLesson[currentIndex].toUpperCase()) {
+                correctArray[currentIndex] = true;
+                goodKeys++;
+            } else {
+                correctArray[currentIndex] = false;
+                badKeys++;
+            }
+
+            currentIndex++;
+
+            if (currentIndex === currentLesson.length) {
+                endLesson();
+            } else {
+                updateTextToType();
+                highlightCurrentKey();
+            }
+
+            // Play sound effect
+            const keySound = document.getElementById('keySound');
+            keySound.currentTime = 0; // Reset to the beginning
+            keySound.play();
+        }
+
+        function endLesson() {
+            const lessonStats = document.getElementById('lessonStats');
+            const lessonEndTime = new Date();
+            const lessonDuration = (lessonEndTime - lessonStartTime) / 1000; // in seconds
+            const keysPerMinute = Math.round(((goodKeys + badKeys) / lessonDuration) * 60); // in keys per minute
+
+            lessonStats.innerHTML = `
+                <p>Lesson completed!</p>
+                <p>Keys per minute: ${keysPerMinute}</p>
+                <p>Good keys: ${goodKeys}</p>
+                <p>Bad keys: ${badKeys}</p>
+            `;
+
+            // Play success sound
+            const successSound = document.getElementById('successSound');
+            successSound.play();
+        }
+
+        // Enable keyboard input
+        document.addEventListener('keydown', (event) => {
+            const pressedKey = event.key.toUpperCase();
+            checkKeyPress(pressedKey);
+        });
+    </script>
+</body>
+</html>
