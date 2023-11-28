@@ -13,6 +13,14 @@ body {
   color: #fff; /* Light text color */
 }
 
+@media screen and (min-width: 500px) {
+  body{font-size: 50%;}
+}
+
+@media screen and (min-width: 700px) {
+  body{font-size: 100%;}
+}
+
 .key {
   width: 100%;
   height: 40px;
