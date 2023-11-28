@@ -31,7 +31,7 @@ body {
 }
 
 .incorrect {
-  color: violet; /* Incorrect key color */
+  background-color: violet; /* Incorrect key color */
 }
 
 #lessonSelector {

@@ -28,7 +28,7 @@ function startLesson() {
     highlightCurrentKey();
 
     // Unfocus start lesson button
-    //document.getElementById('lessonSelector').hidden=true;
+    document.getElementById('startLessonButton').blur();
 }
 
 function generateLessonText(lessonNumber, length) {
@@ -48,22 +48,24 @@ function generateLessonText(lessonNumber, length) {
 }
 
 function getLessonKeys(lessonNumber) {
-    if (lessonNumber === '1') {
-        return ['A', 'S', 'D', 'F', 'G'];
-    } else if (lessonNumber === '2') {
-        return ['H', 'J', 'K', 'L', ';'];
-    } else if (lessonNumber === '3') {
-        return ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'];
-    } else if (lessonNumber === '4') {
-        return ['Q', 'W', 'E', 'R', 'T', 'A', 'S', 'D', 'F', 'G'];
-    } else if (lessonNumber === '5') {
-        return ['Y', 'U', 'I', 'O', 'P', 'H', 'J', 'K', 'L', ';'];
-    } else if (lessonNumber === '6') {
-        return ['Q', 'W', 'E', 'R', 'T', 'A', 'S', 'D', 'F', 'G', 'Y', 'U', 'I', 'O', 'P', 'H', 'J', 'K', 'L', ';'];
-    } else if (lessonNumber === '7') {
-        return ['A', 'S', 'D', 'F', 'G', 'Z', 'X', 'C', 'V', 'B'];
-    } else if (lessonNumber === '8') {
-        return ['H', 'J', 'K', 'L', ';', 'N', 'M', '"', ',', '.', '/'];
+    switch(lessonNumber) {
+        case '1':
+            return ['F','J',' '];
+        case '2':
+            return ['A','S','D','F'];
+        case '3':
+            return ['J','K','L',';'];
+        default:
+            alert('undefined lesson number');
+    }
+}
+
+function letterToHtml(letter) {
+    switch(letter) {
+        case ' ':
+            return '&nbsp;';
+        default:
+            return letter;
     }
 }
 
@@ -71,7 +73,7 @@ function updateTextToType() {
     const textToType = document.getElementById('textToType');
     textToType.innerHTML = currentLesson
         .split('')
-        .map((letter, index) => `<span class="${index === currentIndex ? 'highlight' : ''} ${correctArray[index] ? '' : 'incorrect'}">${letter}</span>`)
+        .map((letter, index) => `<span class="${index === currentIndex ? 'highlight' : ''} ${correctArray[index] ? '' : 'incorrect'}">${letterToHtml(letter)}</span>`)
         .join('');
 }
 
@@ -87,6 +89,12 @@ function highlightCurrentKey() {
             key.style.backgroundColor = ''; // Remove highlight from other keys
         }
     });
+
+    if (currentIndex < currentLesson.length && currentLesson[currentIndex] === ' ') {
+        keyboard.getElementsByClassName('key--space')[0].style.backgroundColor = '#66cc66';
+    } else {
+        keyboard.getElementsByClassName('key--space')[0].style.backgroundColor = '';
+    }
 }
 
 function checkKeyPress(key) {
