@@ -98,6 +98,10 @@ function highlightCurrentKey() {
 }
 
 function checkKeyPress(key) {
+    if (currentIndex === currentLesson.length) {
+        return;
+    }
+
     if (key.toUpperCase() === currentLesson[currentIndex].toUpperCase()) {
         correctArray[currentIndex] = true;
         goodKeys++;
@@ -126,12 +130,12 @@ function endLesson() {
     const lessonEndTime = new Date();
     const lessonDuration = (lessonEndTime - lessonStartTime) / 1000; // in seconds
     const keysPerMinute = Math.round(((goodKeys + badKeys) / lessonDuration) * 60); // in keys per minute
+    const accuracy = Math.round((goodKeys * 100) / (goodKeys + badKeys)); // percentage
 
     lessonStats.innerHTML = `
         <p>Lesson completed!</p>
+        <p>Accuracy: ${accuracy}%</p>
         <p>Keys per minute: ${keysPerMinute}</p>
-        <p>Good keys: ${goodKeys}</p>
-        <p>Bad keys: ${badKeys}</p>
     `;
 
     // Play success sound
@@ -210,7 +214,6 @@ document.body.addEventListener('keyup', function (e) {
 function size () {
     var size = keyboard.parentNode.clientWidth / 90;
     keyboard.style.fontSize = size + 'px';
-    console.log(size);
 }
 
 var keyboard = document.querySelector('.keyboard');
