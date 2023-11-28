@@ -39,9 +39,9 @@ body {
 }
 
 #textToType, #welcome {
-  font-size: 54px; /* Triple the size */
+  font-size: 4em; /* Quadruple the size */
   word-wrap: break-word; /* Word wrapping */
-  margin: 0 20px; /* Margins from left and right */
+  margin: 0 5%; /* Margins from left and right */
   color: #fff; /* Light text color */
 }
 

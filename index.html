@@ -22,9 +22,8 @@
         <button class="button-12" role="button" onclick="startLesson()">Start Lesson</button>
     </div>
 
-    <div id="textToType"></div>
+    <h1 id="textToType">Let's learn touch typing!</h1>
     <div id="lessonStats"></div>
-    <h1 id="welcome">Let's learn touch typing!</h1>
     <div class="keyboard" id="keyboard">
       <div class="keyboard__row keyboard__row--h1">
         <div data-key="27" class="key--word">
@@ -261,10 +260,11 @@
             document.getElementById('lessonStats').innerHTML = '';
 
             // Clear welcome message
-            document.getElementById('welcome').innerHTML = '';
+            document.getElementById('textToType').setAttribute('hasTextToType', true);
+            document.getElementById('textToType').innerHTML = '';
 
             // Reset lesson variables
-            currentLesson = generateLessonText(selectedLesson, 50); // Triple the size
+            currentLesson = generateLessonText(selectedLesson, 50); // Defines length of the lesson
             correctArray = new Array(currentLesson.length).fill(true);
             currentIndex = 0;
             lessonStartTime = new Date();
@@ -415,13 +415,17 @@
         var originalQueue = h1.innerHTML;
         var queue = h1.innerHTML;
 
-        function next () {
+        function next() {
+            if (h1.getAttribute('hasTextToType') !== null) {
+                return
+            }
+
             var c = queue[0];
             queue = queue.slice(1);
             h1.innerHTML = originalQueue.slice(0, originalQueue.length - queue.length);
             pressKey(c);
             if (queue.length) {
-                setTimeout(next, Math.random() * 50 + 50);
+                setTimeout(next, Math.random() * 200 + 50);
             }
         }
 
