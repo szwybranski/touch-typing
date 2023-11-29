@@ -86,9 +86,17 @@ function startLesson() {
     const lessonSelect = document.getElementById('lesson');
     const selectedLesson = lessonSelect.value;
 
-    // Clear lesson success message
-    document.getElementById('lessonStats').innerHTML = '';
-
+    // Clear lesson success message and its class
+    var lessonStats = document.getElementById('lessonStats');
+    lessonStats.innerHTML = '';
+    if (lessonStats.classList.contains('lessonPassed')) {
+        lessonStats.classList.remove('lessonPassed')
+    } else if (lessonStats.classList.contains('lessonFailed')) {
+        lessonStats.classList.remove('lessonFailed')
+    } else if (lessonStats.classList.contains('lessonKeepWorking')) {
+        lessonStats.classList.remove('lessonKeepWorking')
+    } 
+    
     // Clear welcome message
     document.getElementById('textToType').setAttribute('hasTextToType', true);
     document.getElementById('textToType').innerHTML = '';
@@ -189,14 +197,14 @@ function checkKeyPress(key) {
         endLesson();
     }
 
-    playKeySound();
+    playSound('keySound');
 }
 
-function playKeySound() {
+function playSound(soundName) {
     // Play sound effect
-    const keySound = document.getElementById('keySound');
-    keySound.currentTime = 0; // Reset to the beginning
-    keySound.play();
+    const sound = document.getElementById(soundName);
+    sound.currentTime = 0; // Reset to the beginning
+    sound.play();
 }
 
 function endLesson() {
@@ -206,15 +214,22 @@ function endLesson() {
     const keysPerMinute = Math.round(((goodKeys + badKeys) / lessonDuration) * 60); // in keys per minute
     const accuracy = Math.round((goodKeys * 100) / (goodKeys + badKeys)); // percentage
 
+    if (accuracy >= 90) {
+        lessonStats.classList.add("lessonPassed");
+        playSound('successSound');
+    } else if (accuracy <= 50) {
+        lessonStats.classList.add("lessonFailed");
+        playSound('failureSound');
+    } else {
+        lessonStats.classList.add('lessonKeepWorking');
+        playSound('successSound');
+    }
+
     lessonStats.innerHTML = `
         <p>Lesson completed!</p>
         <p>Accuracy: ${accuracy}%</p>
         <p>Keys per minute: ${keysPerMinute}</p>
     `;
-
-    // Play success sound
-    const successSound = document.getElementById('successSound');
-    successSound.play();
 }
 
 // Enable keyboard input
