@@ -5,6 +5,83 @@ let correctArray = [];
 let goodKeys = 0;
 let badKeys = 0;
 
+let lessons = [
+    ['fff','jjj'],
+    ['f','j',' '],
+    ['ddd','kkk'],
+    ['d','k',' '],
+    ['sss','lll'],
+    ['s','l',' '],
+    ['aaa',';;;'],
+    ['a',';',' '],
+    ['ggg','hhh'],
+    ['g','h',' '],
+    ['rrr','uuu'],
+    ['r','u',' '],
+    ['eee','iii'],
+    ['e','i',' '],
+    ['www','ooo'],
+    ['w','o',' '],
+    ['qqq','ppp'],
+    ['q','p',' '],
+    ['ttt','yyy'],
+    ['t','y',' '],
+    ['vvv','mmm'],
+    ['v','m',' '],
+    ['ccc',',,,'],
+    ['c,',' '],
+    ['xxx','...'],
+    ['x','.',' '],
+    ['zzz','///'],
+    ['z','/',' '],
+    ['bbb','nnn'],
+    ['b','n',' '],
+    ['aaa','sss','ddd','fff'],
+    ['a','s','d','f'],
+    ['jjj','kkk','lll',';;;'],
+    ['j','k','l',';'],
+    ['a','s','d','f','g',' '],
+    ['h','j','k','l',';',' '],
+    ['a','s','d','f','j','k','l',';'],
+    ['a','s','d','f','g','h','j','k','l',';',' '],
+    ['q','w','e','r'],
+    ['u','i','o','p'],
+    ['q','w','e','r','t',' '],
+    ['y','u','i','o','p',' '],
+    ['q','w','e','r','u','i','o','p'],
+    ['q','w','e','r','t','y','u','i','o','p',' '],
+    ['a','s','d','f','q','w','e','r'],
+    ['j','k','l',';','u','i','o','p'],
+    ['a','s','d','f','g','q','w','e','r','t',' '],
+    ['h','j','k','l',';','y','u','i','o','p',' '],
+    ['a','s','d','f','g','q','w','e','r','t','h','j','k','l',';','y','u','i','o','p',' '],
+    ['z','x','c','v'],
+    ['m',',','.','/'],
+    ['z','x','c','v','b',' '],
+    ['n','m',',','.','/',' '],
+    ['z','x','c','v','m',',','.','/'],
+    ['z','x','c','v','b','n',',','.','/',' '],
+    ['a','s','d','f','z','x','c','v'],
+    ['j','k','l',';','m',',','.','/'],
+    ['a','s','d','f','g','z','x','c','v','b',' '],
+    ['h','j','k','l',';','n','m',',','.','/',' '],
+    ['a','s','d','f','g','z','x','c','v','b','h','j','k','l',';','n','m',',','.','/',' '],
+];
+
+var select = document.getElementById('lesson');
+for (var i = 0; i<lessons.length; ++i) {
+    var opt = document.createElement('option');
+    opt.value = i + 1;
+    opt.innerHTML = 'Lesson ' + (i + 1);
+    select.appendChild(opt);
+}
+
+function getLessonKeys(lessonNumber) {
+    console.assert(lessonNumber > 0 && lessonNumber <= lessons.length, "Undefined lesson number")
+    // Lessons start at 0, but are presented starting at 1
+    return lessons[lessonNumber - 1]; 
+}
+
 function startLesson() {
     const lessonSelect = document.getElementById('lesson');
     const selectedLesson = lessonSelect.value;
@@ -35,29 +112,22 @@ function generateLessonText(lessonNumber, length) {
     const lessonKeys = getLessonKeys(lessonNumber);
     let text = '';
     let prevKey = '';
-    for (let i = 0; i < length; i++) {
+    while (true) {
         let currentKey = lessonKeys[Math.floor(Math.random() * lessonKeys.length)];
         // Ensure the next key is different than the previous one
         while (currentKey === prevKey) {
             currentKey = lessonKeys[Math.floor(Math.random() * lessonKeys.length)];
         }
-        text += currentKey.toLowerCase(); // Display in lowercase
+        text += currentKey;
         prevKey = currentKey;
+
+        // Stop if we are at or exeeding lesson length
+        if (text.length >= length) {
+            break
+        }
+        
     }
     return text;
-}
-
-function getLessonKeys(lessonNumber) {
-    switch(lessonNumber) {
-        case '1':
-            return ['F','J',' '];
-        case '2':
-            return ['A','S','D','F'];
-        case '3':
-            return ['J','K','L',';'];
-        default:
-            alert('undefined lesson number');
-    }
 }
 
 function letterToHtml(letter) {
@@ -119,6 +189,10 @@ function checkKeyPress(key) {
         endLesson();
     }
 
+    playKeySound();
+}
+
+function playKeySound() {
     // Play sound effect
     const keySound = document.getElementById('keySound');
     keySound.currentTime = 0; // Reset to the beginning

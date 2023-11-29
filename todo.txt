@@ -1,0 +1,6 @@
+-lessons
+-accuracy and speed as starts or something
+-different text/picture/sound/color at the end depending on the score
+-green good, red bad and yellow for new?
+-keyboard handling for non-letters
+-fixes to js, all in functions
