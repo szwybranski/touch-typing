@@ -102,7 +102,7 @@ function startLesson() {
     document.getElementById('textToType').innerHTML = '';
 
     // Reset lesson variables
-    currentLesson = generateLessonText(selectedLesson, 50); // Defines length of the lesson
+    currentLesson = generateLessonText(selectedLesson, 10); // Defines length of the lesson
     correctArray = new Array(currentLesson.length).fill(true);
     currentIndex = 0;
     lessonStartTime = new Date();
@@ -207,6 +207,16 @@ function playSound(soundName) {
     sound.play();
 }
 
+function scheduleNextLesson() {
+    const lessonSelect = document.getElementById('lesson');
+
+    // Don't advance if we are on the last lesson
+    if (lessonSelect.value < lessons.length) {
+        lessonSelect.value = parseInt(lessonSelect.value) + 1;
+        setTimeout(startLesson, 5000)
+    }
+}
+
 function endLesson() {
     const lessonStats = document.getElementById('lessonStats');
     const lessonEndTime = new Date();
@@ -217,6 +227,7 @@ function endLesson() {
     if (accuracy >= 90) {
         lessonStats.classList.add("lessonPassed");
         playSound('successSound');
+        scheduleNextLesson()
     } else if (accuracy <= 50) {
         lessonStats.classList.add("lessonFailed");
         playSound('failureSound');

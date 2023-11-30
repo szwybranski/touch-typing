@@ -1,3 +1,7 @@
+-auto advance to next lesson if previous lesson is done well
+-make dropdown list shorter, so that it is easier to select a lesson
+-lesson descriptions
+-handle lesson words separate by space
 -accuracy and speed as starts or something
 -green good, red bad and yellow for new?
 -keyboard handling for non-letters
