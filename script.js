@@ -102,7 +102,7 @@ function startLesson() {
     document.getElementById('textToType').innerHTML = '';
 
     // Reset lesson variables
-    currentLesson = generateLessonText(selectedLesson, 10); // Defines length of the lesson
+    currentLesson = generateLessonText(selectedLesson, 50); // Defines length of the lesson
     correctArray = new Array(currentLesson.length).fill(true);
     currentIndex = 0;
     lessonStartTime = new Date();
