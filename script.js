@@ -89,13 +89,6 @@ function startLesson() {
     // Clear lesson success message and its class
     var lessonStats = document.getElementById('lessonStats');
     lessonStats.innerHTML = '';
-    if (lessonStats.classList.contains('lessonPassed')) {
-        lessonStats.classList.remove('lessonPassed')
-    } else if (lessonStats.classList.contains('lessonFailed')) {
-        lessonStats.classList.remove('lessonFailed')
-    } else if (lessonStats.classList.contains('lessonKeepWorking')) {
-        lessonStats.classList.remove('lessonKeepWorking')
-    } 
     
     // Clear welcome message
     document.getElementById('textToType').setAttribute('hasTextToType', true);
@@ -217,6 +210,48 @@ function scheduleNextLesson() {
     }
 }
 
+function getSpeedMotivation(keysPerMinute) {
+    if (keysPerMinute >= 80) {
+        return "Amazing! Typing like a falcon flying high—reaching new heights!";
+    } else if (keysPerMinute >= 60) {
+        return "Wow, fast! Quick as a gazelle running on the grass.";
+    } else if (keysPerMinute >= 40) {
+        return "Cool! Typing like a hummingbird moving from flower to flower.";
+    } else if (keysPerMinute >= 20) {
+        return "Awesome! Typing smooth as a dolphin gliding through water.";
+    } else {
+        return "Keep it up! You're like a tortoise—steady progress wins the race!";
+    }
+}
+
+function getAccuracyMotivation(accuracy) {
+    if (accuracy >= 90) {
+        return "Perfect precision! Your fingers hit the right keys like a puzzle falling into place. Keep up the flawless work!";
+    } else if (accuracy >= 80) {
+        return "Great effort! You're navigating the keyboard like an explorer finding the right path. Keep honing those accuracy skills!";
+    } else if (accuracy >= 70) {
+        return "Good progress! Just like a painter refining their masterpiece, you're getting closer to the perfect strokes. Keep fine-tuning those typing skills!";
+    } else if (accuracy >= 60) {
+        return "Nice try! Mistakes are like stepping stones to success. You're learning and growing with every key press. Keep going, you're on the right track!";
+    } else {
+        return "No worries! Every typing journey has bumps along the way. Think of them as little hiccups in a big adventure. Keep typing, and soon those hiccups will turn into smooth sentences!";
+    }
+}
+
+function getBackgroundColorForAccuracyBar(accuracy) {
+    if (accuracy >= 90) {
+        return "#72e01e"; // green
+    } else if (accuracy >= 75) {
+        return "#f2d31b"; // yellow
+    } else if (accuracy >= 50) {
+        return "f39c12"; // orange
+    } else if (accuracy >= 25) {
+        return "hotpink";
+    } else {
+        return "red";
+    }
+}
+
 function endLesson() {
     const lessonStats = document.getElementById('lessonStats');
     const lessonEndTime = new Date();
@@ -224,22 +259,27 @@ function endLesson() {
     const keysPerMinute = Math.round(((goodKeys + badKeys) / lessonDuration) * 60); // in keys per minute
     const accuracy = Math.round((goodKeys * 100) / (goodKeys + badKeys)); // percentage
 
-    if (accuracy >= 90) {
-        lessonStats.classList.add("lessonPassed");
+    if (accuracy >= 60) {
         playSound('successSound');
-        scheduleNextLesson()
-    } else if (accuracy <= 50) {
-        lessonStats.classList.add("lessonFailed");
-        playSound('failureSound');
     } else {
-        lessonStats.classList.add('lessonKeepWorking');
-        playSound('successSound');
+        playSound('failureSound');
     }
 
+    bgcolor = getBackgroundColorForAccuracyBar(accuracy);
+    accuracyMotivation = getAccuracyMotivation(accuracy);
+
+    setTimeout(function() {
+        const accuracyBar = document.getElementById('accuracy-bar');
+        accuracyBar.style.width = CSS.percent(Math.max(1, accuracy));
+        accuracyBar.style.backgroundColor = bgcolor;
+    }, 200);
+
     lessonStats.innerHTML = `
-        <p>Lesson completed!</p>
-        <p>Accuracy: ${accuracy}%</p>
-        <p>Keys per minute: ${keysPerMinute}</p>
+        <p style="text-align:left; margin: 0 0 0 4px;">Accuracy:</p>
+        <div class="progress">
+            <div id="accuracy-bar" class="progress-bar"></div>
+        </div>
+        <p style="text-align:left; margin: 8px 0 0 4px;">${accuracyMotivation}</p>
     `;
 }
 
@@ -321,3 +361,6 @@ window.addEventListener('resize', function (e) {
     size();
 });
 size();
+
+
+document.getElementById('startLessonButton').focus();
