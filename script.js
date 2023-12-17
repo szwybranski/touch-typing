@@ -1,3 +1,4 @@
+let lessonCharLength = 50;
 let currentLesson = [];
 let currentIndex = 0;
 let lessonStartTime;
@@ -95,7 +96,7 @@ function startLesson() {
     document.getElementById('textToType').innerHTML = '';
 
     // Reset lesson variables
-    currentLesson = generateLessonText(selectedLesson, 50); // Defines length of the lesson
+    currentLesson = generateLessonText(selectedLesson, lessonCharLength);
     correctArray = new Array(currentLesson.length).fill(true);
     currentIndex = 0;
     lessonStartTime = new Date();
@@ -275,7 +276,7 @@ function endLesson() {
     }, 200);
 
     lessonStats.innerHTML = `
-        <p style="text-align:left; margin: 0 0 0 4px;">Accuracy:</p>
+        <p style="text-align:left; margin: 0 0 4px 4px;">Accuracy:</p>
         <div class="progress">
             <div id="accuracy-bar" class="progress-bar"></div>
         </div>
